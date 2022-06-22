@@ -1,5 +1,5 @@
-import react, { useState } from "react";
-import { View, Text, Button } from "react-native";
+import react, { useState, useRef, useEffect } from "react";
+import { View, Text, Button, Alert } from "react-native";
 import { NumberContainer, Card } from "../../Components";
 import theme from "../../constants/theme";
 import { styles } from "./styles";
@@ -16,8 +16,39 @@ const generateRandomNumber = ( min, max, exclude ) => {
   }
 }
 
-const GameScren = ({ userOptions  }) => {
-  const [ curretGuess, setCurrentGuess ] = useState(generateRandomNumber(1, 99, userOptions))
+const GameScren = ({ userOptions, onGameOver  }) => {
+  const [ curretGuess, setCurrentGuess ] = useState(generateRandomNumber(1, 100, userOptions));
+  const [ rounds, setRounds ] = useState(0);
+
+  const currentLow = useRef(1);
+  const currentHigh = useRef(100);
+
+  useEffect(() => {
+    if(curretGuess == userOptions) {
+      onGameOver(rounds);
+    }
+  }, [curretGuess, userOptions, onGameOver]);
+
+  const handlerNextGuess = (direction) => {
+    if(
+      (direction === 'lower' && curretGuess < userOptions) ||
+      (direction === 'higher' && curretGuess > userOptions)
+    ) {
+      Alert.alert('No mientas!', 'Tu saber que no es verdad', [
+        { text: 'OK', style: 'cancel'},
+      ]);
+      return null;
+    }
+    if(direction === 'lower') {
+      currentHigh.current = curretGuess;
+    } else {
+      currentLow.current = curretGuess;
+    }
+
+    const nextNumber = generateRandomNumber(currentLow.current, currentHigh.current, curretGuess);
+    setCurrentGuess(nextNumber);
+    setRounds((current) => current + 1);
+  }
 
   return(
     <View style={styles.container} >
@@ -26,12 +57,12 @@ const GameScren = ({ userOptions  }) => {
       <Card style={styles.buttonContainer}>
         <Button 
           title="Menor" 
-          onPress={() => null}
+          onPress={() => handlerNextGuess('lower')}
           color={theme.colors.secondary}
         />
         <Button 
           title="Mayor" 
-          onPress={() => null}
+          onPress={() => handlerNextGuess('higher')}
           color={theme.colors.secondary}
         />
       </Card>

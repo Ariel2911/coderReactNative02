@@ -1,5 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import theme from '../../constants/theme';
+
+const { width, height } = Dimensions.get('window')
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,8 +14,11 @@ export const styles = StyleSheet.create({
     fontSize: 18,
   },
   inputContainer: {
-    width: 300,
-    maxWidth: '80%',
+    // width: 300,
+    width: '80%',
+    // maxWidth: '80%',
+    maxWidth: '90%',
+    minWidth: width * 0.7,
     alignItems: 'center',
     paddingVertical: 20,
   },
@@ -28,9 +33,10 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    width: '100%',
+    // width: '100%',
+    width: width /1.5,
     justifyContent: 'space-between',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
+    paddingVertical: width > 600 ? 20 : 10,
+    // paddingHorizontal: 25,
   },
 });
